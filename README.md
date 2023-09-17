@@ -16,7 +16,7 @@ Everyone gets the same pattern. Maybe it will inspire you to make a song?
 ## How do I use tulpamancer?
 
 1. Install this script.
-2. Connect & configured a MIDI device #1 to norns.
+2. Connect & configure MIDI device #1 to norns.
 3. Connect norns to wifi.
 4. Launch tulpamancer.
 5. Press K2 to play. Press K3 to kill the static.
