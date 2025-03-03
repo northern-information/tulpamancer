@@ -45,15 +45,18 @@ function get_tulpa()
     local file = io.open(tulpa_path, 'rb')
     local headers = file:read '*line'
     local data = file:read '*line'
+    file.close()
+    
+    -- parse and sum csv
     local volume = 0
     local value = 0
     for value in string.gmatch(data, ",\"([^\"]+)\"") do
       local x = string.gsub(value, ",", "")
       volume = volume + tonumber(x)
     end
-    file:close()
+
     volume = math.floor(volume)
-    tulpa_binary = number_to_bitstring(volume)
+    tulpa_binary = number_to_bitstring(volume, 16)
   end
 end
 
