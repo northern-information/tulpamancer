@@ -17,7 +17,7 @@ device = midi.connect(1)
 
 function init()
   first_boot = true
-  tulpa_api = 'https://us-central1-tulpamancer.cloudfunctions.net/tulpamancer'
+  tulpa_api = 'https://www.nyse.com/publicdocs/nyse/US_Equities_Volumes.csv'
   tulpa_path = '/home/we/dust/code/tulpamancer/tulpa.txt'
   tulpa_exists = false
   tulpa_binary = ''
@@ -43,9 +43,29 @@ function get_tulpa()
     tulpa_exists = false
     os.execute('curl -s ' .. tulpa_api .. ' > ' .. tulpa_path)
     local file = io.open(tulpa_path, 'rb')
-    tulpa_binary = file:read '*a'
+    local headers = file:read '*line'
+    local data = file:read '*line'
+    local volume = 0
+    local value = 0
+    for value in string.gmatch(data, ",\"([^\"]+)\"") do
+      local x = string.gsub(value, ",", "")
+      volume = volume + tonumber(x)
+    end
     file:close()
+    volume = math.floor(volume)
+    tulpa_binary = number_to_bitstring(volume)
   end
+end
+
+function number_to_bitstring(n, digits)
+  digits = digits or math.max(1, select(2, math.frexp(n)))
+  local t = {}
+  local b = 0
+  for b = digits, 1, -1 do
+      t[b] = math.fmod(n, 2)
+      n = math.floor((n - t[b]) / 2)
+  end
+  return table.concat(t)
 end
 
 function play_tulpa()
