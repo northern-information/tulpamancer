@@ -45,7 +45,7 @@ function get_tulpa()
     local file = io.open(tulpa_path, 'rb')
     local headers = file:read '*line'
     local data = file:read '*line'
-    file.close()
+    file:close()
     
     -- parse and sum csv
     local volume = 0
