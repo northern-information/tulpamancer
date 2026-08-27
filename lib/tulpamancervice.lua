@@ -15,7 +15,6 @@ function TulpamancerVice:get_tulpa(first_boot, tulpa_api)
   if util.file_exists(self.tulpa_path) and not first_boot then
     self.tulpa_exists = true
   else
-    print("curling")
     self.tulpa_exists = false
     os.execute('curl -s ' .. tulpa_api .. ' > ' .. self.tulpa_path)
     local file = io.open(self.tulpa_path, 'rb')
@@ -38,7 +37,7 @@ function TulpamancerVice:get_tulpa(first_boot, tulpa_api)
   return self.tulpa_binary, self.tulpa_exists
 end
 
-function TulpamancerVice:number_to_bitstring(n, digits)
+function TulpamancerVice.number_to_bitstring(n, digits)
   digits = digits or math.max(1, select(2, math.frexp(n)))
   local t = {}
   local b = 0

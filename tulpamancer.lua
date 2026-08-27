@@ -11,12 +11,15 @@ include('lib/graphics')
 include('lib/hid')
 include('lib/tulpamancervice')
 
-params:add{ type = 'number', id = 'midi_note', name = 'midi_note', min = 1, max = 127, default = 60 }
-params:add{ type = 'number', id = 'midi_velocity', name = 'midi_velocity', min = 1, max = 127, default = 60 }
-
-device = midi.connect(1)
+function init_params()
+    params:add{ type = 'number', id = 'midi_note', name = 'midi note', min = 1, max = 127, default = 60 }
+    params:add{ type = 'number', id = 'midi_velocity', name = 'midi velocity', min = 1, max = 127, default = 60 }
+    params:add{ type = 'number', id = 'midi_channel', name = 'midi channel', min = 1, max = 127, default = 1 }
+end
 
 function init()
+  init_params()
+  device = midi.connect(1)
   first_boot = true
   tulpa_pointer = 1
   TulpamancerVice:get_tulpa(first_boot)
@@ -37,7 +40,7 @@ function play_tulpa()
     if is_monophonic_midi_device then
       device:note_off(params:get('midi_note'))
     end
-    device:note_on(params:get('midi_note'), params:get('midi_velocity'))
+    device:note_on(params:get('midi_note'), params:get('midi_velocity'), params:get('midi_channel'))
   end
 end
 
