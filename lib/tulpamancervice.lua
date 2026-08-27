@@ -9,13 +9,13 @@ function TulpamancerVice:get_tulpa(first_boot, tulpa_api)
   -- automatically retries in case the tulpa.txt gets deleted
   -- first_boot also gets a fresh tulpa each day
 
-  local first_boot = first_boot or true
   local tulpa_api = tulpa_api or self.tulpa_api
+  local first_boot = first_boot or false
 
   if util.file_exists(self.tulpa_path) and not first_boot then
     self.tulpa_exists = true
   else
-    first_boot = false          -- FIXME pointless here, needs to go up
+    print("curling")
     self.tulpa_exists = false
     os.execute('curl -s ' .. tulpa_api .. ' > ' .. self.tulpa_path)
     local file = io.open(self.tulpa_path, 'rb')

@@ -18,7 +18,7 @@ end
 function tulpa_clock()
   while true do
     clock.sleep(3)
-    tulpa_binary, tulpa_exists = TulpamancerVice:get_tulpa(first_boot)
+    TulpamancerVice:get_tulpa(first_boot)
   end
 end
 

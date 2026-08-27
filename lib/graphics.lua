@@ -32,11 +32,11 @@ function draw_data()
   screen.level(15)
   screen.move(1, 7)
   screen.text('TULPAMANCER::::::::::::::::')
-  if tulpa_exists then
+  if TulpamancerVice.tulpa_exists then
     screen.move(1, 15)
     screen.text('Today\'s tulpa is: ')
     screen.move(1, 28)
-    for i = 1, #tulpa_binary do
+    for i = 1, #TulpamancerVice.tulpa_binary do
       if i == tulpa_pointer then
         screen.level(15)
       else
@@ -44,7 +44,7 @@ function draw_data()
       end
       screen.font_size(12)
       screen.font_face(3)
-      screen.text(tulpa_binary:sub(i, i))
+      screen.text(TulpamancerVice.tulpa_binary:sub(i, i))
       screen.font_face(1)
       screen.font_size(8)
     end

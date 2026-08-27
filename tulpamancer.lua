@@ -19,7 +19,8 @@ device = midi.connect(1)
 function init()
   first_boot = true
   tulpa_pointer = 1
-  tulpa_binary, tulpa_exists = TulpamancerVice:get_tulpa(first_boot)
+  TulpamancerVice:get_tulpa(first_boot)
+  first_boot = false
   tulpa_clock_id = clock.run(tulpa_clock)
   counter = 0
   is_monophonic_midi_device = true
@@ -31,8 +32,8 @@ function init()
 end
 
 function play_tulpa()
-  tulpa_pointer = util.wrap(tulpa_pointer + 1, 1, #tulpa_binary)
-  if tulpa_binary:sub(tulpa_pointer, tulpa_pointer) == '1' then
+  tulpa_pointer = util.wrap(tulpa_pointer + 1, 1, #TulpamancerVice.tulpa_binary)
+  if TulpamancerVice.tulpa_binary:sub(tulpa_pointer, tulpa_pointer) == '1' then
     if is_monophonic_midi_device then
       device:note_off(params:get('midi_note'))
     end
