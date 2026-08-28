@@ -2,7 +2,7 @@ TulpamancerVice = {}
 
 TulpamancerVice.tulpa_api = 'https://www.nyse.com/publicdocs/nyse/US_Equities_Volumes.csv'
 TulpamancerVice.tulpa_path = '/home/we/dust/code/tulpamancer/tulpa.txt'
-TulpamancerVice.tulpa_exists = false
+TulpamancerVice.tulpa_exists = nil -- meaning: cached as a file on disk
 TulpamancerVice.tulpa_binary = ''
 
 function TulpamancerVice:get_tulpa(first_boot, tulpa_api)
@@ -32,8 +32,12 @@ function TulpamancerVice:get_tulpa(first_boot, tulpa_api)
 
     volume = math.floor(volume)
     self.tulpa_binary = self.number_to_bitstring(volume, 16)
-    self.tulpa_exists = true
+
+    if util.file_exists(self.tulpa_path) then
+       self.tulpa_exists = true
+    end
   end
+
   return self.tulpa_binary, self.tulpa_exists
 end
 
