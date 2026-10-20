@@ -1,42 +1,62 @@
-TulpamancerVice = {}
+local TulpamancerVice = {}
 
 TulpamancerVice.tulpa_api = 'https://www.nyse.com/publicdocs/nyse/US_Equities_Volumes.csv'
-TulpamancerVice.tulpa_path = '/home/we/dust/code/tulpamancer/tulpa.txt'
-TulpamancerVice.tulpa_exists = nil -- meaning: cached as a file on disk
+TulpamancerVice.tulpa_path = _path.data .. 'tulpamancer/tulpa.txt'
+TulpamancerVice.tulpa_exists = false -- meaning: a valid tulpa is loaded
 TulpamancerVice.tulpa_binary = ''
+TulpamancerVice.fetched_on = nil
 
-function TulpamancerVice:get_tulpa(first_boot, tulpa_api)
-  -- automatically retries in case the tulpa.txt gets deleted
-  -- first_boot also gets a fresh tulpa each day
+local function shell_quote(s)
+  return "'" .. (s:gsub("'", "'\\''")) .. "'"
+end
 
-  local tulpa_api = tulpa_api or self.tulpa_api
-  local first_boot = first_boot or false
+local function parse_volume(path)
+  local file = io.open(path, 'rb')
+  if not file then return nil end
+  file:read('*line') -- headers
+  local data = file:read('*line')
+  file:close()
+  if not data then return nil end
 
-  if util.file_exists(self.tulpa_path) and not first_boot then
-    self.tulpa_exists = true
-  else
-    self.tulpa_exists = false
-    os.execute('curl -s ' .. tulpa_api .. ' > ' .. self.tulpa_path)
-    local file = io.open(self.tulpa_path, 'rb')
-    local headers = file:read '*line'
-    local data = file:read '*line'
-    file:close()
-
-    -- parse and sum csv
-    local volume = 0
-    local value = 0
-    for value in string.gmatch(data, ",\"([^\"]+)\"") do
-      local x = string.gsub(value, ",", "")
-      volume = volume + tonumber(x)
-    end
-
-    volume = math.floor(volume)
-    self.tulpa_binary = self.number_to_bitstring(volume, 16)
-
-    if util.file_exists(self.tulpa_path) then
-       self.tulpa_exists = true
-    end
+  -- sum the quoted numbers in the first data row
+  local volume = 0
+  local count = 0
+  for value in string.gmatch(data, ",\"([^\"]+)\"") do
+    local x = tonumber((string.gsub(value, ",", "")))
+    if not x then return nil end
+    volume = volume + x
+    count = count + 1
   end
+  if count == 0 then return nil end
+
+  return math.floor(volume)
+end
+
+function TulpamancerVice:get_tulpa(force_refresh, tulpa_api)
+  -- fetches a fresh tulpa once a day, on force_refresh, or when tulpa.txt is deleted
+  -- on failure it keeps the last good tulpa and the next call retries
+
+  local today = os.date('%Y-%m-%d')
+  if not force_refresh
+    and self.tulpa_exists
+    and self.fetched_on == today
+    and util.file_exists(self.tulpa_path) then
+    return self.tulpa_binary, self.tulpa_exists
+  end
+
+  util.make_dir(self.tulpa_path:match('(.*/)'))
+  local ok = os.execute('curl -sf ' .. shell_quote(tulpa_api or self.tulpa_api)
+    .. ' -o ' .. shell_quote(self.tulpa_path))
+  local volume = ok and parse_volume(self.tulpa_path)
+
+  if not volume then
+    os.remove(self.tulpa_path)
+    return self.tulpa_binary, self.tulpa_exists
+  end
+
+  self.tulpa_binary = self.number_to_bitstring(volume, 16)
+  self.tulpa_exists = true
+  self.fetched_on = today
 
   return self.tulpa_binary, self.tulpa_exists
 end
@@ -44,7 +64,6 @@ end
 function TulpamancerVice.number_to_bitstring(n, digits)
   digits = digits or math.max(1, select(2, math.frexp(n)))
   local t = {}
-  local b = 0
   for b = digits, 1, -1 do
       t[b] = math.fmod(n, 2)
       n = math.floor((n - t[b]) / 2)

@@ -18,7 +18,7 @@ end
 function tulpa_clock()
   while true do
     clock.sleep(3)
-    TulpamancerVice:get_tulpa(first_boot)
+    TulpamancerVice:get_tulpa()
   end
 end
 
