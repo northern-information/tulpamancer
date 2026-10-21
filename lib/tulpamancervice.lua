@@ -1,7 +1,7 @@
 local TulpamancerVice = {}
 
 TulpamancerVice.tulpa_api = 'https://www.nyse.com/publicdocs/nyse/US_Equities_Volumes.csv'
-TulpamancerVice.tulpa_path = '/home/we/dust/code/tulpamancer/tulpa.txt'
+TulpamancerVice.tulpa_path = _path.data..'tulpamancer/tulpa.txt'
 TulpamancerVice.tulpa_exists = nil -- meaning: cached as a file on disk
 TulpamancerVice.tulpa_binary = ''
 
