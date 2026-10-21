@@ -9,7 +9,7 @@
 include('lib/clocks')
 include('lib/graphics')
 include('lib/hid')
-include('lib/tulpamancervice')
+TulpamancerVice = include('lib/tulpamancervice')
 
 function init_params()
     params:add{ type = 'number', id = 'midi_note', name = 'midi note', min = 1, max = 127, default = 60 }

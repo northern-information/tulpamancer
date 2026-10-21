@@ -1,4 +1,4 @@
-TulpamancerVice = {}
+local TulpamancerVice = {}
 
 TulpamancerVice.tulpa_api = 'https://www.nyse.com/publicdocs/nyse/US_Equities_Volumes.csv'
 TulpamancerVice.tulpa_path = '/home/we/dust/code/tulpamancer/tulpa.txt'
